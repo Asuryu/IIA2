@@ -1,15 +1,15 @@
 
-#ifndef CODIGO_UTILS_H
-#define CODIGO_UTILS_H
+#ifndef UTILS_H
+#define UTILS_H
 
 
-int *setMatriz(char *nome_ficheiro, int *v, int *numero_iteracoes);
-void gerar_solucaoInicial(int *solucao, int v);
-void escrever_solucao(int *solucao, int v);
+int *preenche_matriz(char *file, int *v, int *numero_iteracoes);
+void gerar_solinicial(int *sol, int v);
+void escrever_solucao(int *sol, int v);
 void substitui(int a[], int b[], int n);
 
 void init_rand();
-int random(int minimo, int maximo);
-float random_0e1();
+int random_int(int minimo, int maximo);
+float random_float_01();
 
-#endif //CODIGO_UTILS_H
+#endif // UTILS_H

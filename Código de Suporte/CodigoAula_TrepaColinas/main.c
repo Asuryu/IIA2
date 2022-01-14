@@ -28,7 +28,8 @@ int main(int argc, char *argv[])
         {
             runs = DEFAULT_RUNS;
             printf("Nome do Ficheiro: ");
-            gets(nome_fich);
+            fgets(nome_fich, 100, stdin);
+			nome_fich[strlen(nome_fich) - 1] = '\0';
         }
 	if(runs <= 0)
 		return 0;
