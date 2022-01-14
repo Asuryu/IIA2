@@ -54,7 +54,6 @@ int main() {
                 }
             }
 
-            // Escreve resultados globais
             printf("\n\nMBF: %f\n", mbf / i);
             printf("\nMelhor solucao encontrada");
             escrever_solucao(best, vert);
