@@ -3,6 +3,24 @@
 #include "utils.h"
 #include "pesquisaLocal.h"
 
+int calcula_fit(int a[], int *mat, int vert)
+{
+	int total=0;
+	int i, j;
+
+	for(i=0; i<vert; i++)
+		if(a[i]==0)
+		{
+			for(j=0; j<vert;j++)
+				if(a[j]==1 && *(mat+i*vert+j)==1)
+				    total++;
+		}
+	return total;
+}
+
+// Gera um vizinho
+// Parametros: solucao actual, vizinho, numero de vertices
+//swap two vertices
 void gera_vizinho(int a[], int b[], int n)
 {
     int i, p1, p2;
@@ -22,21 +40,9 @@ void gera_vizinho(int a[], int b[], int n)
     b[p2] = 0;
 }
 
-int calcula_fit(int a[], int *mat, int vert)
-{
-	int total=0;
-	int i, j;
-
-	for(i=0; i<vert; i++)
-		if(a[i]==0)
-		{
-			for(j=0; j<vert;j++)
-				if(a[j]==1 && *(mat+i*vert+j)==1)
-				    total++;
-		}
-	return total;
-}
-
+// Trepa colinas first-choice
+// Parametros: solucao, matriz de adjacencias, numero de vertices e numero de iteracoes
+// Devolve o custo da melhor solucao encontrada
 int trepa_colinas(int sol[], int *mat, int vert, int num_iter)
 {
     int *nova_sol, custo, custo_viz, i;
@@ -56,7 +62,7 @@ int trepa_colinas(int sol[], int *mat, int vert, int num_iter)
 		// Avalia vizinho
 		custo_viz = calcula_fit(nova_sol, mat, vert);
 		// Aceita vizinho se o custo diminuir (problema de minimizacao)
-        if(custo_viz <= custo)
+        if(custo_viz < custo)
         {
 			substitui(sol, nova_sol, vert);
 			custo = custo_viz;
