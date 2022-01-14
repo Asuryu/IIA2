@@ -4,6 +4,16 @@
 
 #include "utils.h"
 
+void mostraASCII(){
+    printf("\033[2J\033[1;1H");
+    printf("██╗██╗ █████╗\n");
+    printf("██║██║██╔══██╗\n");
+    printf("██║██║███████║\n");
+    printf("██║██║██╔══██║\n");
+    printf("██║██║██║  ██║\n");
+    printf("╚═╝╚═╝╚═╝  ╚═╝\n\n");
+}
+
 int random_int(int minimo, int maximo){
     int n;
     n = minimo + rand() % (maximo-minimo+1);

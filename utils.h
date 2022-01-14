@@ -2,6 +2,7 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+void mostraASCII();
 
 int *preenche_matriz(char *file, int *v, int *numero_iteracoes);
 void gerar_solinicial(int *sol, int v);
