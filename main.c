@@ -1,51 +1,62 @@
-#include <time.h>
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
-#include "utils.h"
-#include "pesquisaLocal.h"
 
-int main(){
+#include ".\utils.h"
+#include ".\funcao.h"
+#include ".\algoritmo.h"
 
-    int vert, ares, custo, best_custo=0, k;
-    int *grafo, *sol, *best;
-    char nomeFicheiro[100];
+#define DEFAULT_RUNS 10
+
+int main() {
+    char nome_ficheiro[100];
+    int numero_iteracoes = 0, nvertices = 0;
+    int *matriz, *solucao, *melhorSolucao, custo, runs = DEFAULT_RUNS, melhorCusto = 0;
     float mbf = 0.0;
-    srand((unsigned)time(NULL));
 
-    printf("Introduza o nome do ficheiro com os dados: ");
-    scanf("%s", nomeFicheiro);
+    printf("Nome do ficheiro: ");
+    gets(nome_ficheiro);
+    printf("\n");
 
-    grafo = init_dados(nomeFicheiro, &vert, &ares);
-    sol = malloc(sizeof(int)*vert);
-    best = malloc(sizeof(int)*vert);
-    printf("grafo: %d %d\n", vert, ares);
-    gera_sol_inicial(sol, vert);
-    for(k=0; k<5; k++)
-	{
-		// Gerar solucao inicial
-		gera_sol_inicial(sol, vert);
-		escreve_sol(sol, vert);
-		// Trepa colinas
-		custo = trepa_colinas(sol, grafo, vert, ares);
-		// Escreve resultados da repeticao k
-		printf("\nRepeticao %d:", k);
-		escreve_sol(sol, vert);
-		printf("Custo final: %2d\n", custo);
-		mbf += custo;
-		if(k==0 || best_custo > custo)
-		{
-			best_custo = custo;
-			substitui(best, sol, vert);
-		}
+//=================== TREPA COLINAS =======================================
+    int i;
+
+    matriz = setMatriz(nome_ficheiro, &nvertices, &numero_iteracoes);
+
+    solucao = malloc(sizeof(int) * nvertices);
+    melhorSolucao = malloc(sizeof(int) * nvertices);
+
+    if (solucao == NULL || melhorSolucao == NULL) {
+        printf("Erro na alocacao de memoria!");
+        exit(1);
     }
-	// Escreve eresultados globais
-	printf("\n\nMBF: %f\n", mbf/k);
-	printf("\nMelhor solucao encontrada");
-	escreve_sol(best, vert);
-	printf("Custo final: %2d\n", best_custo);
-	free(grafo);
-    free(sol);
-	free(best);
 
-    return 0;
+    for (i = 0; i < runs; i++) {
+        gerar_solucaoInicial(solucao, nvertices);
+        escrever_solucao(solucao, nvertices);
+
+        custo = trepaColinas(solucao, matriz, nvertices, numero_iteracoes);
+
+        // Escreve resultados desta repetição 'i'
+        printf("\nRepeticao %d: ", i);
+        escrever_solucao(solucao, nvertices);
+        printf("Custo final: %2d\n", custo);
+        mbf += custo;
+        if (i == 0 || melhorCusto > custo) {
+            melhorCusto = custo;
+            substitui(melhorSolucao, solucao, nvertices);
+        }
+    }
+
+    // Escreve resultados globais
+    printf("\n\nMBF: %f\n", mbf / i);
+    printf("\nMelhor solucao encontrada");
+    escrever_solucao(melhorSolucao, nvertices);
+    printf("Custo final: %2d\n", melhorCusto);
+
+    free(matriz);
+    free(solucao);
+    free(melhorSolucao);
+
+    return 1;
 }

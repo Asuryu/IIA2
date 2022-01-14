@@ -1,92 +1,119 @@
-#include <stdio.h>
 #include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 #include <time.h>
+
 #include "utils.h"
 
-// Leitura do ficheiro de input
-// Recebe: nome do ficheiro, numero de vertices (ptr), numero de iteracoes (ptr)
-// Devolve a matriz de adjacencias
-int* init_dados(char *nome, int *n, int *iter)
-{
-	FILE *f;
-	char buffer[100];
-	int *p, *q;
-	int i, j;
-
-	f=fopen(nome, "r");
-	if(!f)
-	{
-		printf("Erro no acesso ao ficheiro dos dados\n");
-		exit(1);
-	}
-	
-	fscanf(f, "p edge %d %d", n, iter); // Numero de vertices e iteracoes (arestas)
-	// Alocacao dinamica da matriz
-	p = malloc(sizeof(int)*(*n)*(*iter));
-	if(!p)
-	{
-	    printf("Erro na alocacao de memoria\n");
-	    exit(1);
-	}
-	q=p;
-	// Preenchimento da matriz
-	for(i=0; i<*n; i++)
-        for(j=0; j<*iter; j++)
-            fscanf(f, "e %d %d", p++, q++);
-	fclose(f);
-	return p;
+// Para que o random retorne sempre numeros diferentes
+void init_rand(){
+    srand((unsigned)time(NULL));
 }
 
-// Gera a solucao inicial
-// Parametros: solucao, numero de vertices
-void gera_sol_inicial(int *sol, int v)
-{
-	int i, x;
+// Gerar valor random entre minimo e maximo
+int random(int minimo, int maximo){
+    int n;
+    n = minimo + rand() % (maximo-minimo+1);
+    return n;
+}
 
-	for(i=0; i<v; i++)
-        sol[i]=0;
-	for(i=0; i<v/2; i++)
-    {
-        do
-			x = random_l_h(0, v-1);
-        while(sol[x] != 0);
-        sol[x]=1;
+// Gerar valor real entre 0 e 1
+float random_0e1(){
+    int x;
+    x = ((float)rand())/RAND_MAX;
+    return x;
+}
+
+// Inicializar a matriz
+int *setMatriz(char *nome_ficheiro, int *v, int *numero_iteracoes){
+    FILE *of;
+    char lerString[200];
+    int v1=0,v2=0;
+    int *matriz, *matriz2;
+
+    of=fopen(nome_ficheiro,"r");
+    if(of == NULL){
+        printf("Erro na abertura do ficheiro!");
+        exit(1);
+    }
+
+    do{
+        fscanf(of," %s ",lerString);
+    }while(strcmp(lerString,"edge")!=0);
+    fscanf(of," %d ",v);
+    fscanf(of,"%d\n",numero_iteracoes);
+
+    if(*v<=0){
+        printf("\nErro! Numero de vertices menor ou igual a 0");
+        exit(1);
+    }
+    else if(*v > 500){
+        printf("\nErro! Numero de vertices maior do que 500");
+    }
+
+    matriz = malloc(sizeof(int)*(*v)*(*v));
+    if(matriz == NULL){
+        printf("\nErro ao alocar memoria para a matriz!");
+        fclose(of);
+        exit(1);
+    }
+
+    matriz2 = matriz;
+
+    for(int i=0;i<(*v);i++){
+        for(int j=0;j<(*v);j++) {
+            fscanf(of, "e %d %d\n", &v1, &v2);
+            *(matriz + (i - 1) * (*v) + (j - 1)) = 1;
+            *(matriz + (j - 1) * (*v) + (i - 1)) = 1;
+            matriz2 = matriz;
+        }
+    }
+
+    for(int x=0;x<(*v)*(*v);x++){
+            printf("[%d]",matriz2[x]);
+        }
+
+    return matriz;
+}
+
+// Gerar uma solução
+void gerar_solucaoInicial(int *solucao, int v){
+    int x;
+
+    for(int i=0;i<v;i++){
+        solucao[i]=0;
+    }
+    for(int i=0;i<v/2;i++){
+        do{
+            x = random(0,v-1);
+        }while(solucao[x] != 0);
+        solucao[x] = 1;
     }
 }
 
-// Escreve solucao
-// Parametros: solucao e numero de vertices
-void escreve_sol(int *sol, int vert)
-{
-	int i;
+// Escrever uma solução
+void escrever_solucao(int *solucao, int v){
+    printf("\nConjunto A: ");
+    for(int i=0;i<v;i++){
+        if(solucao[i]==0){
+            printf("%2d  ",i);
+        }
+    }
 
-	printf("\nConjunto A: ");
-	for(i=0; i<vert; i++)
-		if(sol[i]==0)
-			printf("%2d  ", i);
-	printf("\nConjunto B: ");
-	for(i=0; i<vert; i++)
-		if(sol[i]==1)
-			printf("%2d  ", i);
-	printf("\n");
+    printf("\nConjunto B: ");
+    for(int i=0;i<v;i++){
+        if(solucao[i]==1){
+            printf("%2d  ",i);
+        }
+    }
+
+    printf("\n");
 }
 
-// copia vector b para a (tamanho n)
-void substitui(int a[], int b[], int n)
-{
-    int i;
-    for(i=0; i<n; i++)
+// Copiar vetor b para o vetor a de tamanho n
+void substitui(int a[], int b[], int n){
+    for(int i=0;i<n;i++){
         a[i]=b[i];
+    }
 }
 
-// Devolve valor inteiro aleatorio entre min e max
-int random_l_h(int min, int max)
-{
-	return min + rand() % (max-min+1);
-}
-
-// Devolve um valor real aleatorio do intervalo [0, 1]
-float rand_01()
-{
-	return ((float)rand())/RAND_MAX;
-}

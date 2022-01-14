@@ -1,3 +1,5 @@
+c asdasd 
+c asdasdasd
 p edge 6 5
 e 1 4
 e 2 4
