@@ -1,5 +1,5 @@
-c asdasd 
-c asdasdasd
+c Instancia de teste para problema 
+c IIA 2021 22
 p edge 6 5
 e 1 4
 e 2 4
