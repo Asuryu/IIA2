@@ -31,7 +31,10 @@ int *preenche_matriz(char *file, int *v, int *numero_iteracoes){
     FILE *of;
     char buffer[100];
     int v1 = 0 , v2 = 0;
-    int *matriz, *matriz2;
+    int *matriz, *matriz2, *k;
+    char z[] = "0"; //lel
+	char x[] = "1"; //lel
+    int i, j;
 
     of=fopen(file, "r");
     if(of == NULL){
@@ -40,10 +43,18 @@ int *preenche_matriz(char *file, int *v, int *numero_iteracoes){
     }
 
     do{
-        fscanf(of, " %s ", buffer);
+        fscanf(of, "%s", buffer);
+        printf("%s\n", buffer);
     } while(strcmp(buffer, "edge") != 0);
+
     fscanf(of, " %d ", v);
     fscanf(of, "%d\n", numero_iteracoes);
+    
+    // Read until the end of the file
+    while(!feof(of)){
+        fscanf(of, "%d %d\n", &v1, &v2);
+        printf("%d %d\n", v1, v2);
+    }
 
     matriz = malloc(sizeof(int)*(*v)*(*v));
     if(matriz == NULL){
@@ -54,13 +65,31 @@ int *preenche_matriz(char *file, int *v, int *numero_iteracoes){
 
     matriz2 = matriz;
 
+    for (i = 0; i < *v; i++)
+		for (j = 0; j < *v; j++)
+			sscanf(z, "%d", matriz2++);
+	k = matriz;
+
+     // mostrar matriz
     for(int i=0;i<(*v);i++){
         for(int j=0;j<(*v);j++) {
-            fscanf(of, "e %d %d\n", &v1, &v2);
-            *(matriz + (i - 1) * (*v) + (j - 1)) = 1;
-            *(matriz + (j - 1) * (*v) + (i - 1)) = 1;
-            matriz2 = matriz;
-        }
+            printf("%d ", *(matriz + (i - 1) * (*v) + (j - 1)));
+        }    
+        printf("\n");
+    }
+
+    while (fscanf(of, "e %d %d", &i, &j) == 2){
+            printf("%d %d\n", i,j);
+            sscanf(x, "%d", k + offset(i-1, j-1, *v));   
+	}
+
+    printf("\n\n");
+    // mostrar matriz
+    for(int i=0;i<(*v);i++){
+        for(int j=0;j<(*v);j++) {
+            printf("%d ", *(matriz + (i - 1) * (*v) + (j - 1)));
+        }    
+        printf("\n");
     }
 
     return matriz;
