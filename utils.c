@@ -104,26 +104,10 @@ void substitui(int a[], int b[], int n){
     }
 }
 
-chrom get_best(pchrom pop, struct info d, chrom best)
-{
-	int i;
-
-	for (i=0; i<d.popsize; i++)
-	{
-		if (best.fitness < pop[i].fitness)
-			best=pop[i];
-	}
-	return best;
+int probEvento(float prob){
+    return prob > ((float)rand()/RAND_MAX);
 }
 
-void write_best(chrom x, struct info d)
-{
-	int i;
-
-	printf("\nBest individual: %4.1f\n", x.fitness);
-	for (i=0; i<d.numGenes; i++)
-		printf("%d", x.p[i]);
-	putchar('\n');
+int offset(int i, int j, int cols){
+	return i * cols + j;
 }
-
-

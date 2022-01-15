@@ -5,115 +5,91 @@
 #include "engine.h"
 #include "utils.h"
 
-void gerar_vizinho(int *sol, int *vizinho, int vertices){
-    int p01;
+void gerar_vizinho(int a[], int b[], int n)
+{
+    int i, p1, p2, temp;
 
-    for(int i = 0; i < vertices;i ++){
-        vizinho[i] = sol[i];
-    }
+    for(i=0; i<n; i++)
+        b[i]=a[i];
 
-    p01 = random_int(0, vertices-1);
 
-    vizinho[p01] = !vizinho[p01];
+        p1=random_int(0, n-1);
+        
+        
+        p2=random_int(0, n-1);
+      
+        // Troca
+        temp = b[p1];
+        b[p1] = b[p2];
+        b[p2] = temp;
+  
 }
 
-void gerar_vizinho2(int *sol, int *vizinho, int vertices){
-    int p01, p02;
+int trepaColinas(int sol[], int *mat, int vert, int num_iter)
+{
+    int *nova_sol, custo, custo_viz, i;
 
-    for(int i = 0; i < vertices; i++){
-        vizinho[i] = sol[i];
-    }
 
-    p01 = random_int(0, vertices-1);
-
-    vizinho[p01] = !vizinho[p01];
-
-    do{
-        p02 = random_int(0, vertices-1);
-    } while(p01 == p02);
-
-    vizinho[p02] = !vizinho[p02];
-}
-
-int trepaColinas(int sol[], int *matriz, int vertices, int iter){
-    int *novaSolucao, custo, custoVizinho;
-
-    novaSolucao = malloc(sizeof(int)*vertices);
-    if(novaSolucao == NULL){
+	nova_sol = malloc(sizeof(int)*vert);
+    if(nova_sol == NULL)
+    {
         printf("Erro na alocacao de memoria");
         exit(1);
     }
-
-    custo = calcular_custo(sol, matriz, vertices);
-    for(int i=0; i<iter; i++){
-
-        gerar_vizinho2(sol, novaSolucao, vertices);
-        
-        custoVizinho = calcular_custo(novaSolucao, matriz, vertices);
-
-        if(custoVizinho >= custo){
-            substitui(sol, novaSolucao, vertices);
-            custo = custoVizinho;
+	// Avalia solucao inicial
+    custo = calcula_fit(sol, mat, vert);
+    for(i=0; i<num_iter; i++)
+    {
+      
+		// Gera vizinho
+		gerar_vizinho(sol, nova_sol, vert);
+		// Avalia vizinho
+		custo_viz = calcula_fit(nova_sol, mat, vert);
+		// Aceita vizinho se o custo diminuir (problema de minimizacao)
+        if(custo_viz > custo)
+        {
+			substitui(sol, nova_sol, vert);
+			custo = custo_viz;
+            break;
         }
     }
+    free(nova_sol);
 
-    free(novaSolucao);
     return custo;
 }
-
-int trepaColinas2(int sol[], int *matriz, int vertices, int iter){
-    int *novaSolucao, custo, custoVizinho;
-
-    novaSolucao = malloc(sizeof(int)*vertices);
-    if(novaSolucao == NULL){
+int trepaColinasProb(int sol[], int *mat, int vert, int num_iter)
+{
+    int *nova_sol, custo, custo_viz, i;
+    float probs= 0.0005;// {0.05, 0.1,0.3,0.5,0.7,0.9};
+	nova_sol = malloc(sizeof(int)*vert);
+    if(nova_sol == NULL)
+    {
         printf("Erro na alocacao de memoria");
         exit(1);
     }
-
-    custo = calcular_custo(sol, matriz, vertices);
-    for(int i=0; i<iter; i++){
-
-        gerar_vizinho(sol, novaSolucao, vertices);
-        
-        custoVizinho = calcular_custo(novaSolucao, matriz, vertices);
-
-        if(custoVizinho >= custo){
-            substitui(sol, novaSolucao, vertices);
-            custo = custoVizinho;
-        }
+	// Avalia solucao inicial
+    custo = calcula_fit(sol, mat, vert);
+    for(i=0; i<num_iter; i++)
+    {
+      
+		// Gera vizinho
+		gerar_vizinho(sol, nova_sol, vert);
+		// Avalia vizinho
+		custo_viz = calcula_fit(nova_sol, mat, vert);
+		// Aceita vizinho se o custo diminuir (problema de minimizacao)
+                if(custo_viz > custo)
+                {
+       
+			substitui(sol, nova_sol, vert);
+			custo = custo_viz;
+                }
+                else if(probEvento(probs))
+                {
+			substitui(sol, nova_sol, vert);
+			custo = custo_viz;
+                }
     }
+    free(nova_sol);
 
-    free(novaSolucao);
-    return custo;
-}
-
-int trepaColinasProb(int sol[], int *matriz, int vertices, int iter) {
-    int *novaSolucao, custo, custoVizinho;
-
-    novaSolucao = malloc(sizeof(int) * vertices);
-    if (novaSolucao == NULL) {
-        printf("[ERRO] Ocorreu um problema ao alocar memória.");
-        exit(1);
-    }
-    // Avaliar solução inicial
-    custo = calcular_custo(sol, matriz, vertices);
-    for (int i = 0; i < iter; i++) {
-        // Gerar vizinho
-        gerar_vizinho(sol, novaSolucao, vertices);
-        // Avaliar vizinho
-        custoVizinho = calcular_custo(novaSolucao, matriz, vertices);
-
-        // Aceitar vizinho se o custo aumentar (problema de maximização)
-        if (custoVizinho >= custo) {
-            substitui(sol, novaSolucao, vertices);
-            custo = custoVizinho;
-        } else {
-            if (random_float_01() <= 0.01) {
-                substitui(sol, novaSolucao, vertices);
-                custo = custoVizinho;
-            }
-        }
-    }
-    free(novaSolucao);
     return custo;
 }

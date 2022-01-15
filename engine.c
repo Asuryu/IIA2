@@ -1,25 +1,26 @@
 #include "engine.h"
+#include "utils.h"
+#include <stdlib.h>
 
-int calcular_custo(int s[], int *mat, int v){
-    int total = 0;
-    int count = 0;
-
-    for(int i = 0; i < v; i++) {
-        if (s[i] == 1) {
-            for (int j = 0; j < v; j++) {
-                if (s[j] == 1 && *(mat + i * v + j) == 1) {
-                    total++;
-                }
+int calcula_fit(int a[], int *mat, int vert)
+{
+	int custo=0;
+        int aux=0;
+        int offsetv=0;
+        //o custo da solucao equivale a diferenca entre duas ligacoes
+	for(int i=0; i<vert; i++)
+	{
+            for(int j= 0 ; j < vert ; j++)
+            {
+                offsetv = offset(i,j,vert);
+                if(mat[offsetv] == 1)
+                {
+                    aux = abs(a[i]-a[j]);
+                    if(aux > custo)
+                        custo=aux;
+                }  
             }
         }
-    }
-
-    if(total == 0){
-        for(int j = 0; j < v; j++){
-            if(s[j] == 1){
-                count++;
-            }
-        }
-        return count;
-    } else return total;
+     
+	return custo;
 }
