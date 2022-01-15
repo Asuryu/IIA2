@@ -1,10 +1,5 @@
 c File  p_hat300_1.clq
 c Source: P. Soriano and M. Gendreau at  patrick@crt.umontreal.ca
-c Reference: p-hat graphs are generated with the p-hat generator
-c 	      which is a generalisation of the classical uniform
-c 	      random graph generator.
-c 	      Graphs generated with p-hat have wider node degree spread
-c 	      and larger cliques than uniform graphs.
 c NOTE: September 23, 1993 Corrected corrupted file at DIMACS.
 p edge  300     10933	
 e 5 4

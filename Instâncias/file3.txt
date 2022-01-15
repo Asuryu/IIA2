@@ -1,8 +1,5 @@
 c File:  hamming6-4.clq
 c Source: Panos Pardalos pardalos@math.ufl.edu
-c Reference: hamminga-b is a Hamming graph on a-bit words with
-c            an edge if and only if the two words are at least
-c            hamming distance b apart
 p edge 64 704
 e 9 8
 e 10 7

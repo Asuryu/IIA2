@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "utils.h"
+#include "evolutivo.h"
 
 void mostraASCII(){
     printf("\033[2J\033[1;1H");
@@ -44,14 +45,6 @@ int *preenche_matriz(char *file, int *v, int *numero_iteracoes){
     fscanf(of, " %d ", v);
     fscanf(of, "%d\n", numero_iteracoes);
 
-    if(*v <= 0){
-        printf("\n[ERRO] O número de vértices não pode ser inferior a 0");
-        exit(1);
-    }
-    else if(*v >= 300){
-        printf("[ERRO] O número de vértices não pode ser maior do que 500.");
-    }
-
     matriz = malloc(sizeof(int)*(*v)*(*v));
     if(matriz == NULL){
         printf("[ERRO] Ocorreu um problema ao alocar memória.");
@@ -69,10 +62,6 @@ int *preenche_matriz(char *file, int *v, int *numero_iteracoes){
             matriz2 = matriz;
         }
     }
-
-    for(int x=0; x<(*v)*(*v); x++){
-            printf("[%d]", matriz2[x]);
-        }
 
     return matriz;
 }
@@ -114,4 +103,27 @@ void substitui(int a[], int b[], int n){
         a[i] = b[i];
     }
 }
+
+chrom get_best(pchrom pop, struct info d, chrom best)
+{
+	int i;
+
+	for (i=0; i<d.popsize; i++)
+	{
+		if (best.fitness < pop[i].fitness)
+			best=pop[i];
+	}
+	return best;
+}
+
+void write_best(chrom x, struct info d)
+{
+	int i;
+
+	printf("\nBest individual: %4.1f\n", x.fitness);
+	for (i=0; i<d.numGenes; i++)
+		printf("%d", x.p[i]);
+	putchar('\n');
+}
+
 

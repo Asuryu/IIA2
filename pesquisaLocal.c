@@ -61,6 +61,32 @@ int trepaColinas(int sol[], int *matriz, int vertices, int iter){
     return custo;
 }
 
+int trepaColinas2(int sol[], int *matriz, int vertices, int iter){
+    int *novaSolucao, custo, custoVizinho;
+
+    novaSolucao = malloc(sizeof(int)*vertices);
+    if(novaSolucao == NULL){
+        printf("Erro na alocacao de memoria");
+        exit(1);
+    }
+
+    custo = calcular_custo(sol, matriz, vertices);
+    for(int i=0; i<iter; i++){
+
+        gerar_vizinho(sol, novaSolucao, vertices);
+        
+        custoVizinho = calcular_custo(novaSolucao, matriz, vertices);
+
+        if(custoVizinho >= custo){
+            substitui(sol, novaSolucao, vertices);
+            custo = custoVizinho;
+        }
+    }
+
+    free(novaSolucao);
+    return custo;
+}
+
 int trepaColinasProb(int sol[], int *matriz, int vertices, int iter) {
     int *novaSolucao, custo, custoVizinho;
 
