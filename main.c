@@ -125,7 +125,7 @@ void tColinasProb()
         // printf("Custo final: %2d\n", custo);
 
         mbf += custo;
-        if (i == 0 || bestCusto < custo)
+        if (i == 0 || bestCusto <= custo)
         {
             bestCusto = custo;
             substitui(best, solucao, vert);
