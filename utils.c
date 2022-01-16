@@ -11,7 +11,8 @@
 #define T_SIZE 7
 #define NUM_GENERATIONS 30
 
-void mostraASCII(){
+void mostraASCII()
+{
     printf("\033[2J\033[1;1H");
     printf("██╗██╗ █████╗\n");
     printf("██║██║██╔══██╗\n");
@@ -21,39 +22,45 @@ void mostraASCII(){
     printf("╚═╝╚═╝╚═╝  ╚═╝\n\n");
 }
 
-int random_int(int minimo, int maximo){
+int random_int(int minimo, int maximo)
+{
     int n;
-    n = minimo + rand() % (maximo-minimo+1);
+    n = minimo + rand() % (maximo - minimo + 1);
     return n;
 }
 
-float random_float_01(){
+float random_float_01()
+{
     int x;
-    x = ((float)rand())/RAND_MAX;
+    x = ((float)rand()) / RAND_MAX;
     return x;
 }
 
-int *preenche_matriz(char *file, int *v, int *numero_iteracoes){
+int *preenche_matriz(char *file, int *v, int *numero_iteracoes)
+{
     FILE *of;
     char buffer[100];
     int *matriz, *matriz2, *k;
     int i, j;
 
-    of=fopen(file, "r");
-    if(of == NULL){
+    of = fopen(file, "r");
+    if (of == NULL)
+    {
         printf("[ERRO] Ocorreu um problema ao abrir o ficheiro.");
         exit(1);
     }
 
-    do{
+    do
+    {
         fscanf(of, "%s", buffer);
-    } while(strcmp(buffer, "edge") != 0);
+    } while (strcmp(buffer, "edge") != 0);
 
     fscanf(of, " %d ", v);
     fscanf(of, "%d\n", numero_iteracoes);
 
-    matriz = malloc(sizeof(int)*(*v)*(*v));
-    if(matriz == NULL){
+    matriz = malloc(sizeof(int) * (*v) * (*v));
+    if (matriz == NULL)
+    {
         printf("[ERRO] Ocorreu um problema ao alocar memória.");
         fclose(of);
         exit(1);
@@ -62,18 +69,21 @@ int *preenche_matriz(char *file, int *v, int *numero_iteracoes){
     matriz2 = matriz;
 
     for (i = 0; i < *v; i++)
-		for (j = 0; j < *v; j++)
-			sscanf("0", "%d", matriz2++);
-	k = matriz;
+        for (j = 0; j < *v; j++)
+            sscanf("0", "%d", matriz2++);
+    k = matriz;
 
-    while (fscanf(of, "e %d %d\n", &i, &j) == 2){
-            sscanf("1", "%d", k + calcIndice(i-1, j-1, *v));   
-	}
+    while (fscanf(of, "e %d %d\n", &i, &j) == 2)
+    {
+        sscanf("1", "%d", k + calcIndice(i - 1, j - 1, *v));
+    }
 
     printf("\n");
     // mostrar matriz
-    for(int i=0;i<(*v);i++){
-        for(int j=0;j<(*v);j++) {
+    for (int i = 0; i < (*v); i++)
+    {
+        for (int j = 0; j < (*v); j++)
+        {
             printf("%d ", *(matriz + (i - 1) * (*v) + (j - 1)));
         }
         printf("\n");
@@ -82,31 +92,40 @@ int *preenche_matriz(char *file, int *v, int *numero_iteracoes){
     return matriz;
 }
 
-void gerar_solinicial(int *sol, int v){
+void gerar_solinicial(int *sol, int v)
+{
     int x;
 
-    for(int i = 0; i < v; i++){
+    for (int i = 0; i < v; i++)
+    {
         sol[i] = 0;
     }
-    for(int i = 0; i < (v/2); i++){
-        do{
-            x = random_int(0, v-1);
-        } while(sol[x] != 0);
+    for (int i = 0; i < (v / 2); i++)
+    {
+        do
+        {
+            x = random_int(0, v - 1);
+        } while (sol[x] != 0);
         sol[x] = 1;
     }
 }
 
-void escrever_solucao(int *sol, int v){
+void escrever_solucao(int *sol, int v)
+{
     printf("\nConjunto A: ");
-    for(int i = 0; i < v; i++){
-        if(sol[i] == 0){
+    for (int i = 0; i < v; i++)
+    {
+        if (sol[i] == 0)
+        {
             printf("%2d  ", i);
         }
     }
 
     printf("\nConjunto B: ");
-    for(int i = 0; i < v; i++){
-        if(sol[i] == 1){
+    for (int i = 0; i < v; i++)
+    {
+        if (sol[i] == 1)
+        {
             printf("%2d  ", i);
         }
     }
@@ -114,69 +133,78 @@ void escrever_solucao(int *sol, int v){
     printf("\n");
 }
 
-void substitui(int a[], int b[], int n){
-    for(int i = 0; i < n; i++){
+void substitui(int a[], int b[], int n)
+{
+    for (int i = 0; i < n; i++)
+    {
         a[i] = b[i];
     }
 }
 
-int probEvento(float prob){
-    return prob > ((float)rand()/RAND_MAX);
+int probEvento(float prob)
+{
+    return prob > ((float)rand() / RAND_MAX);
 }
 
-int calcIndice(int i, int j, int cols){
-	return i * cols + j;
+int calcIndice(int i, int j, int cols)
+{
+    return i * cols + j;
 }
 
-
-
-
-int** init_dados(char *nome, int *vertices, int *arestas) {
+int **init_dados(char *nome, int *vertices, int *arestas)
+{
 
     FILE *of = fopen(nome, "rt");
     int **p = NULL;
     char buffer[100];
     int i;
-    if (!of) {
-        fprintf(stderr, "Erro na abertura do ficheiro");
+    if (!of)
+    {
+        fprintf(stderr, "[ERRO] Ocorreu um erro ao abrir o ficheiro\n");
         exit(0);
     }
 
-    do{
+    do
+    {
         fscanf(of, "%s", buffer);
-    } while(strcmp(buffer, "edge") != 0);
+    } while (strcmp(buffer, "edge") != 0);
 
     fscanf(of, " %d ", vertices);
     fscanf(of, "%d\n", arestas);
 
-    p = malloc(sizeof (int) * (*arestas));
-    if (!p) {
-        fprintf(stderr, "Erro na alocacao de memoria");
+    p = malloc(sizeof(int) * (*arestas));
+    if (!p)
+    {
+        printf("[ERRO] Ocorreu um erro ao alocar memória\n");
         fclose(of);
-        exit(2);
+        exit(0);
     }
-    for ( i = 0; i < *arestas; i++) {
-        p[i] = malloc(sizeof (int) * 2);
-        if (!p[i]) {
-            fprintf(stderr, "Erro na alocacao de memoria \n");
+    for (i = 0; i < *arestas; i++)
+    {
+        p[i] = malloc(sizeof(int) * 2);
+        if (!p[i])
+        {
+            printf("Erro na alocacao de memoria \n");
             fclose(of);
-            exit(3);
+            exit(0);
         }
     }
-    for ( i = 0; i < *arestas; i++) {
-        if (fscanf(of, "e %d %d\n", &p[i][0], &p[i][1]) != 2) {
-            fprintf(stderr, "Erro na leitura de parametros. \n");
+    for (i = 0; i < *arestas; i++)
+    {
+        if (fscanf(of, "e %d %d\n", &p[i][0], &p[i][1]) != 2)
+        {
             free(p);
             fclose(of);
-            exit(4);
+            exit(0);
         }
     }
-    
+
     fclose(of);
     return p;
 }
 
-info init_data(int arestas, int vertices) {
+info init_data(int arestas, int vertices)
+{
     info x;
     x.vertices = vertices;
     x.aresta = arestas;
@@ -188,13 +216,15 @@ info init_data(int arestas, int vertices) {
     return x;
 }
 
-void gera_sol_inicial(int *sol, int v) {
+void gera_sol_inicial(int *sol, int v)
+{
     int aux = v;
     int a[v];
-    int x,i;
-    for ( i = 0; i < v; i++)
+    int x, i;
+    for (i = 0; i < v; i++)
         a[i] = i + 1;
-    for ( i = 0; i < v; i++) {
+    for (i = 0; i < v; i++)
+    {
         x = random_int(0, aux - 1);
         sol[i] = a[x];
         a[x] = a[aux - 1];
@@ -202,18 +232,22 @@ void gera_sol_inicial(int *sol, int v) {
     }
 }
 
-pchrom init_pop(info d){
+pchrom init_pop(info d)
+{
     int i;
     pchrom indiv;
-    
-    indiv = malloc(sizeof (chrom) * d.pop);
-    if (!indiv) {
+
+    indiv = malloc(sizeof(chrom) * d.pop);
+    if (!indiv)
+    {
         printf("Erro na alocacao de memoria. \n");
         exit(1);
     }
-    for (i = 0; i < d.pop; i++) {
-        indiv[i].p = malloc(sizeof (int) * d.vertices);
-        if (!indiv[i].p) {
+    for (i = 0; i < d.pop; i++)
+    {
+        indiv[i].p = malloc(sizeof(int) * d.vertices);
+        if (!indiv[i].p)
+        {
             fprintf(stderr, "Erro na alocacao de memoria. \n");
             exit(2);
         }
@@ -222,16 +256,19 @@ pchrom init_pop(info d){
     return indiv;
 }
 
-chrom get_best(pchrom pop, info d, chrom best) {
+chrom get_best(pchrom pop, info d, chrom best)
+{
     int i;
-    for ( i = 0; i < d.pop; i++) {
+    for (i = 0; i < d.pop; i++)
+    {
         if (best.fitness > pop[i].fitness)
             best = pop[i];
     }
     return best;
 }
 
-void write_best(chrom x, info d) {
+void write_best(chrom x, info d)
+{
     int i;
     printf("\nBest individual: %d\n", x.fitness);
     for (i = 0; i < d.vertices; i++)

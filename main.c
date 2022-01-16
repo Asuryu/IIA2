@@ -8,12 +8,12 @@
 #include "pesquisaLocal.h"
 #include "evolutivo.h"
 
-
 void tColinas();
 void tColinasProb();
 void torneioBinario();
 
-int main() {
+int main()
+{
     int escolha;
     srand((unsigned)time(NULL));
     mostraASCII();
@@ -22,16 +22,19 @@ int main() {
     printf("\n3 - Torneio Binário");
     printf("\n0 - Sair\n\nEscolha: ");
     scanf("%d", &escolha);
-    
-    if(escolha == 1) tColinas();
-    else if(escolha == 2) tColinasProb();
-    else if(escolha == 3) torneioBinario();
+
+    if (escolha == 1)
+        tColinas();
+    else if (escolha == 2)
+        tColinasProb();
+    else if (escolha == 3)
+        torneioBinario();
 
     return 0;
 }
 
-
-void tColinas(){
+void tColinas()
+{
     char file[100];
     int runs = 10;
     int iter, vert, custo, bestCusto;
@@ -50,13 +53,15 @@ void tColinas(){
     solucao = malloc(sizeof(int) * vert);
     best = malloc(sizeof(int) * vert);
 
-    if (solucao == NULL || best == NULL) {
+    if (solucao == NULL || best == NULL)
+    {
         printf("[ERRO] Ocorreu um problema ao alocar memória.");
         exit(1);
     }
 
-    for (i = 0; i < runs; i++) {
-        
+    for (i = 0; i < runs; i++)
+    {
+
         gerar_solinicial(solucao, vert);
         custo = trepaColinas(solucao, matriz, vert, iter);
 
@@ -65,7 +70,8 @@ void tColinas(){
         // printf("Custo final: %2d\n", custo);
 
         mbf += custo;
-        if (i == 0 || bestCusto < custo) {
+        if (i == 0 || bestCusto < custo)
+        {
             bestCusto = custo;
             substitui(best, solucao, vert);
         }
@@ -81,7 +87,8 @@ void tColinas(){
     free(best);
 }
 
-void tColinasProb(){
+void tColinasProb()
+{
     char file[100];
     int runs = 10;
     int iter, vert, custo, bestCusto;
@@ -100,12 +107,14 @@ void tColinasProb(){
     solucao = malloc(sizeof(int) * vert);
     best = malloc(sizeof(int) * vert);
 
-    if (solucao == NULL || best == NULL) {
+    if (solucao == NULL || best == NULL)
+    {
         printf("[ERRO] Ocorreu um problema ao alocar memória.");
         exit(1);
     }
 
-    for (i = 0; i < runs; i++) {
+    for (i = 0; i < runs; i++)
+    {
         gerar_solinicial(solucao, vert);
         //escrever_solucao(solucao, vert);
 
@@ -116,7 +125,8 @@ void tColinasProb(){
         // printf("Custo final: %2d\n", custo);
 
         mbf += custo;
-        if (i == 0 || bestCusto < custo) {
+        if (i == 0 || bestCusto < custo)
+        {
             bestCusto = custo;
             substitui(best, solucao, vert);
         }
@@ -132,7 +142,8 @@ void tColinasProb(){
     free(best);
 }
 
-void torneioBinario(){
+void torneioBinario()
+{
     char file[100];
     int runs = 10;
     int iter, vert, gen_atual;
@@ -152,20 +163,23 @@ void torneioBinario(){
 
     mat = init_dados(file, &vert, &iter);
     param = init_data(vert, iter);
-    
-    for(i = 0; i < runs; i++){
+
+    for (i = 0; i < runs; i++)
+    {
         printf("Repetição %d\n", i);
         pop = init_pop(param);
         evaluate(pop, param, mat);
         best_run = pop[0];
         best_run = get_best(pop, param, best_run);
         parents = malloc(sizeof(chrom) * param.pop);
-        if(parents == NULL){
+        if (parents == NULL)
+        {
             printf("[ERRO] Ocorreu um problema ao alocar memória.");
             exit(1);
         }
         gen_atual = 1;
-        while(gen_atual <= param.numGenerations){
+        while (gen_atual <= param.numGenerations)
+        {
             tournament(pop, param, parents);
             genetic_operators(parents, param, pop);
             evaluate(pop, param, mat);
@@ -174,11 +188,13 @@ void torneioBinario(){
         }
         write_best(best_run, param);
         mbf += best_run.fitness;
-        if(i == 0 || best_ever.fitness < best_run.fitness){
+        if (i == 0 || best_ever.fitness < best_run.fitness)
+        {
             best_ever = best_run;
         }
         free(parents);
-        for(int j = 0; j < param.pop; j++){
+        for (int j = 0; j < param.pop; j++)
+        {
             free(pop[j].p);
             free(parents[j].p);
         }
@@ -189,10 +205,10 @@ void torneioBinario(){
     printf("\nMelhor solucao encontrada");
     write_best(best_ever, param);
     mbf = 0;
-    for(int j = 0; j < iter; j++){
+    for (int j = 0; j < iter; j++)
+    {
         free(mat[j]);
     }
     free(best_ever.p);
     free(best_run.p);
-
 }

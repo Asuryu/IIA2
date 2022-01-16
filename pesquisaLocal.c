@@ -41,7 +41,7 @@ int trepaColinas(int sol[], int *mat, int vert, int num_iter)
         gerar_vizinho(sol, nova_sol, vert);
         // Avalia vizinho
         custo_viz = calcula_fit(nova_sol, mat, vert);
-        // Aceita vizinho se o custo diminuir (problema de minimizacao)
+
         if (custo_viz > custo)
         {
             substitui(sol, nova_sol, vert);
