@@ -2,48 +2,50 @@
 #include "algoritmo.h"
 #include "funcao.h"
 
-// Calcula a qualidade de uma solução
-// Parâmetros de entrada: solução (sol), capacidade da mochila (d), matriz com dados do problema (mat) e numero de objectos (v)
-// Parâmetros de saída: qualidade da solução (se a capacidade for excedida devolve 0)
+// Calcula a qualidade de uma soluï¿½ï¿½o
+// Parï¿½metros de entrada: soluï¿½ï¿½o (sol), capacidade da mochila (d), matriz com dados do problema (mat) e numero de objectos (v)
+// Parï¿½metros de saï¿½da: qualidade da soluï¿½ï¿½o (se a capacidade for excedida devolve 0)
 float eval_individual(int sol[], struct info d, int mat[][2], int *v)
 {
-	int     i;
-	float   sum_weight, sum_profit;
-
-	sum_weight = sum_profit = 0;
-	// Percorre todos os objectos
-	for (i=0; i < d.numGenes; i++)
+	int i;
+	float sum_weight, sum_profit;
+	do
 	{
-        // Verifica se o objecto i esta na mochila
-		if (sol[i] == 1)
+		sum_weight = sum_profit = 0;
+		// Percorre todos os objectos
+		for (i = 0; i < d.numGenes; i++)
 		{
-            // Actualiza o peso total
-			sum_weight += mat[i][0];
-            // Actualiza o lucro total
-			sum_profit += mat[i][1];
+			// Verifica se o objecto i esta na mochila
+			if (sol[i] == 1)
+			{
+				// Actualiza o peso total
+				sum_weight += mat[i][0];
+				// Actualiza o lucro total
+				sum_profit += mat[i][1];
+			}
 		}
-	}
-	if (sum_weight > d.capacity)
-	{
-        // Solucao inválida
-		*v = 0;
-		return 0;
-	}
-	else
-	{
-        // Solucao válida
-		*v = 1;
-		return sum_profit;
-	}
+		if (sum_weight > d.capacity)
+		{
+			// Solucao invï¿½lida
+			do
+			{
+				i = random_int(0, d.numGenes - 1);
+			} while (sol[i] == 0);
+			sol[i] = 0;
+		}
+	} while (sum_weight > d.capacity);
+
+	*v = 1;
+	return sum_profit;
 }
 
-// Avaliacao da população
-// Parâmetros de entrada: populacao (pop), estrutura com parametros (d) e matriz com dados do problema (mat)
-// Parâmetros de saída: Preenche pop com os valores de fitness e de validade para cada solução
+// Avaliacao da populaï¿½ï¿½o
+// Parï¿½metros de entrada: populacao (pop), estrutura com parametros (d) e matriz com dados do problema (mat)
+// Parï¿½metros de saï¿½da: Preenche pop com os valores de fitness e de validade para cada soluï¿½ï¿½o
 void evaluate(pchrom pop, struct info d, int mat[][2])
 {
 	int i;
 
-	for (i=0; i<d.popsize; i++)
+	for (i = 0; i < d.popsize; i++)
 		pop[i].fitness = eval_individual(pop[i].p, d, mat, &pop[i].valido);
 }

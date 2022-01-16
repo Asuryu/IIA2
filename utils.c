@@ -5,6 +5,12 @@
 #include "utils.h"
 #include "evolutivo.h"
 
+#define POPSIZE 10
+#define PR 0.5
+#define PM 0.5
+#define T_SIZE 7
+#define NUM_GENERATIONS 30
+
 void mostraASCII(){
     printf("\033[2J\033[1;1H");
     printf("██╗██╗ █████╗\n");
@@ -31,8 +37,6 @@ int *preenche_matriz(char *file, int *v, int *numero_iteracoes){
     FILE *of;
     char buffer[100];
     int *matriz, *matriz2, *k;
-    char z[] = "0"; //lel
-	char x[] = "1"; //lel
     int i, j;
 
     of=fopen(file, "r");
@@ -59,19 +63,19 @@ int *preenche_matriz(char *file, int *v, int *numero_iteracoes){
 
     for (i = 0; i < *v; i++)
 		for (j = 0; j < *v; j++)
-			sscanf(z, "%d", matriz2++);
+			sscanf("0", "%d", matriz2++);
 	k = matriz;
 
     while (fscanf(of, "e %d %d\n", &i, &j) == 2){
-            sscanf(x, "%d", k + offset(i-1, j-1, *v));   
+            sscanf("1", "%d", k + calcIndice(i-1, j-1, *v));   
 	}
 
-    printf("\n\n");
+    printf("\n");
     // mostrar matriz
     for(int i=0;i<(*v);i++){
         for(int j=0;j<(*v);j++) {
             printf("%d ", *(matriz + (i - 1) * (*v) + (j - 1)));
-        }    
+        }
         printf("\n");
     }
 
@@ -120,6 +124,117 @@ int probEvento(float prob){
     return prob > ((float)rand()/RAND_MAX);
 }
 
-int offset(int i, int j, int cols){
+int calcIndice(int i, int j, int cols){
 	return i * cols + j;
+}
+
+
+
+
+int** init_dados(char *nome, int *vertices, int *arestas) {
+
+    FILE *of = fopen(nome, "rt");
+    int **p = NULL;
+    char buffer[100];
+    int i;
+    if (!of) {
+        fprintf(stderr, "Erro na abertura do ficheiro");
+        exit(0);
+    }
+
+    do{
+        fscanf(of, "%s", buffer);
+    } while(strcmp(buffer, "edge") != 0);
+
+    fscanf(of, " %d ", vertices);
+    fscanf(of, "%d\n", arestas);
+
+    p = malloc(sizeof (int) * (*arestas));
+    if (!p) {
+        fprintf(stderr, "Erro na alocacao de memoria");
+        fclose(of);
+        exit(2);
+    }
+    for ( i = 0; i < *arestas; i++) {
+        p[i] = malloc(sizeof (int) * 2);
+        if (!p[i]) {
+            fprintf(stderr, "Erro na alocacao de memoria \n");
+            fclose(of);
+            exit(3);
+        }
+    }
+    for ( i = 0; i < *arestas; i++) {
+        if (fscanf(of, "e %d %d\n", &p[i][0], &p[i][1]) != 2) {
+            fprintf(stderr, "Erro na leitura de parametros. \n");
+            free(p);
+            fclose(of);
+            exit(4);
+        }
+    }
+    
+    fclose(of);
+    return p;
+}
+
+info init_data(int arestas, int vertices) {
+    info x;
+    x.vertices = vertices;
+    x.aresta = arestas;
+    x.pop = POPSIZE;
+    x.pm = PM;
+    x.pr = PR;
+    x.tsize = T_SIZE;
+    x.numGenerations = NUM_GENERATIONS;
+    return x;
+}
+
+void gera_sol_inicial(int *sol, int v) {
+    int aux = v;
+    int a[v];
+    int x,i;
+    for ( i = 0; i < v; i++)
+        a[i] = i + 1;
+    for ( i = 0; i < v; i++) {
+        x = random_int(0, aux - 1);
+        sol[i] = a[x];
+        a[x] = a[aux - 1];
+        aux--;
+    }
+}
+
+pchrom init_pop(info d){
+    int i;
+    pchrom indiv;
+    
+    indiv = malloc(sizeof (chrom) * d.pop);
+    if (!indiv) {
+        printf("Erro na alocacao de memoria. \n");
+        exit(1);
+    }
+    for (i = 0; i < d.pop; i++) {
+        indiv[i].p = malloc(sizeof (int) * d.vertices);
+        if (!indiv[i].p) {
+            fprintf(stderr, "Erro na alocacao de memoria. \n");
+            exit(2);
+        }
+        gera_sol_inicial(indiv[i].p, d.vertices);
+    }
+    return indiv;
+}
+
+chrom get_best(pchrom pop, info d, chrom best) {
+    int i;
+    for ( i = 0; i < d.pop; i++) {
+        if (best.fitness > pop[i].fitness)
+            best = pop[i];
+    }
+    return best;
+}
+
+void write_best(chrom x, info d) {
+    int i;
+    printf("\nBest individual: %d\n", x.fitness);
+    for (i = 0; i < d.vertices; i++)
+        printf("%d ", x.p[i]);
+    puts("\n");
 }

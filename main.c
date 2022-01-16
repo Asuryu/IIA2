@@ -34,7 +34,7 @@ int main() {
 void tColinas(){
     char file[100];
     int runs = 10;
-    int iter, vert, custo, bestCusto, escolha;
+    int iter, vert, custo, bestCusto;
     int *matriz, *solucao, *best;
     float mbf = 0.0;
     int i;
@@ -54,17 +54,18 @@ void tColinas(){
         printf("[ERRO] Ocorreu um problema ao alocar memória.");
         exit(1);
     }
-    gerar_solinicial(solucao, vert);
-    escrever_solucao(solucao, vert);
-    for (i = 0; i < runs; i++) {
 
+    for (i = 0; i < runs; i++) {
+        
+        gerar_solinicial(solucao, vert);
         custo = trepaColinas(solucao, matriz, vert, iter);
 
-        printf("\nRepeticao %d: ", i);
-        escrever_solucao(solucao, vert);
-        printf("Custo final: %2d\n", custo);
+        // printf("\nRepeticao %d: ", i);
+        // escrever_solucao(solucao, vert);
+        // printf("Custo final: %2d\n", custo);
+
         mbf += custo;
-        if (i == 0 || bestCusto <= custo) {
+        if (i == 0 || bestCusto < custo) {
             bestCusto = custo;
             substitui(best, solucao, vert);
         }
@@ -83,7 +84,7 @@ void tColinas(){
 void tColinasProb(){
     char file[100];
     int runs = 10;
-    int iter, vert, custo, bestCusto, escolha;
+    int iter, vert, custo, bestCusto;
     int *matriz, *solucao, *best;
     float mbf = 0.0;
     int i;
@@ -106,15 +107,16 @@ void tColinasProb(){
 
     for (i = 0; i < runs; i++) {
         gerar_solinicial(solucao, vert);
-        escrever_solucao(solucao, vert);
+        //escrever_solucao(solucao, vert);
 
         custo = trepaColinasProb(solucao, matriz, vert, iter);
 
-        printf("\nRepeticao %d: ", i);
-        escrever_solucao(solucao, vert);
-        printf("Custo final: %2d\n", custo);
+        // printf("\nRepeticao %d: ", i);
+        // escrever_solucao(solucao, vert);
+        // printf("Custo final: %2d\n", custo);
+
         mbf += custo;
-        if (i == 0 || bestCusto <= custo) {
+        if (i == 0 || bestCusto < custo) {
             bestCusto = custo;
             substitui(best, solucao, vert);
         }
@@ -131,5 +133,66 @@ void tColinasProb(){
 }
 
 void torneioBinario(){
+    char file[100];
+    int runs = 10;
+    int iter, vert, gen_atual;
+    int **mat;
+    float mbf = 0;
+    info param;
+    pchrom pop = NULL, parents = NULL;
+    chrom best_run, best_ever;
+    int i;
+
+    mostraASCII();
+    fflush(stdin);
+    printf("Introduza o nome do ficheiro: ");
+    fgets(file, 100, stdin);
+    file[strlen(file) - 1] = '\0';
+    printf("\n");
+
+    mat = init_dados(file, &vert, &iter);
+    param = init_data(vert, iter);
     
+    for(i = 0; i < runs; i++){
+        printf("Repetição %d\n", i);
+        pop = init_pop(param);
+        evaluate(pop, param, mat);
+        best_run = pop[0];
+        best_run = get_best(pop, param, best_run);
+        parents = malloc(sizeof(chrom) * param.pop);
+        if(parents == NULL){
+            printf("[ERRO] Ocorreu um problema ao alocar memória.");
+            exit(1);
+        }
+        gen_atual = 1;
+        while(gen_atual <= param.numGenerations){
+            tournament(pop, param, parents);
+            genetic_operators(parents, param, pop);
+            evaluate(pop, param, mat);
+            best_run = get_best(pop, param, best_run);
+            gen_atual++;
+        }
+        write_best(best_run, param);
+        mbf += best_run.fitness;
+        if(i == 0 || best_ever.fitness < best_run.fitness){
+            best_ever = best_run;
+        }
+        free(parents);
+        for(int j = 0; j < param.pop; j++){
+            free(pop[j].p);
+            free(parents[j].p);
+        }
+        free(pop);
+        free(parents);
+    }
+    printf("\n\nMBF: %f\n", mbf / runs);
+    printf("\nMelhor solucao encontrada");
+    write_best(best_ever, param);
+    mbf = 0;
+    for(int j = 0; j < iter; j++){
+        free(mat[j]);
+    }
+    free(best_ever.p);
+    free(best_run.p);
+
 }
