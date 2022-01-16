@@ -8,6 +8,11 @@
 #include "pesquisaLocal.h"
 #include "evolutivo.h"
 
+
+void tColinas();
+void tColinasProb();
+void torneioBinario();
+
 int main() {
     int escolha;
     srand((unsigned)time(NULL));
