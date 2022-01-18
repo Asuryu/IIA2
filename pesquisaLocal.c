@@ -26,23 +26,23 @@ int trepaColinas(int sol[], int *mat, int vert, int num_iter)
 {
     int *nova_sol, custo, custo_viz, i;
 
-    nova_sol = malloc(sizeof(int) * vert);
+    nova_sol = malloc(sizeof(int) * vert); // Alocar memória para a solução a ser calculada
     if (nova_sol == NULL)
     {
         printf("Erro na alocacao de memoria");
         exit(1);
     }
     // Avalia solucao inicial
-    custo = calcula_fit(sol, mat, vert);
+    custo = calcula_fit(sol, mat, vert); // Calcula o custo da solução
     for (i = 0; i < num_iter; i++)
     {
 
         // Gera vizinho
-        gerar_vizinho(sol, nova_sol, vert);
+        gerar_vizinho(sol, nova_sol, vert); // Gera vizinho
         // Avalia vizinho
-        custo_viz = calcula_fit(nova_sol, mat, vert);
+        custo_viz = calcula_fit(nova_sol, mat, vert); // Calcula o custo do vizinho
 
-        if (custo_viz > custo)
+        if (custo_viz > custo) // Se o custo do vizinho for maior que o da solução atual
         {
             substitui(sol, nova_sol, vert);
             custo = custo_viz;
@@ -51,7 +51,7 @@ int trepaColinas(int sol[], int *mat, int vert, int num_iter)
     }
     free(nova_sol);
 
-    return custo;
+    return custo; // Retorna o custo da solução calculada
 }
 int trepaColinasProb(int sol[], int *mat, int vert, int num_iter)
 {

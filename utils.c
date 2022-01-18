@@ -52,13 +52,13 @@ int *preenche_matriz(char *file, int *v, int *numero_iteracoes)
 
     do
     {
-        fscanf(of, "%s", buffer);
-    } while (strcmp(buffer, "edge") != 0);
+        fscanf(of, "%s", buffer); // Lê as linhas de comentário
+    } while (strcmp(buffer, "edge") != 0); // Enquanto não encontrar a palavra "edge"
 
-    fscanf(of, " %d ", v);
-    fscanf(of, "%d\n", numero_iteracoes);
+    fscanf(of, " %d ", v); // Lê o número de vértices
+    fscanf(of, "%d\n", numero_iteracoes); // Lê o número de arestas
 
-    matriz = malloc(sizeof(int) * (*v) * (*v));
+    matriz = malloc(sizeof(int) * (*v) * (*v)); // Aloca memória para o grafo
     if (matriz == NULL)
     {
         printf("[ERRO] Ocorreu um problema ao alocar memória.");
@@ -66,20 +66,22 @@ int *preenche_matriz(char *file, int *v, int *numero_iteracoes)
         exit(1);
     }
 
-    matriz2 = matriz;
+    matriz2 = matriz; // Preservar matriz inicial
 
-    for (i = 0; i < *v; i++)
-        for (j = 0; j < *v; j++)
-            sscanf("0", "%d", matriz2++);
+    // Inicializar a matriz com zeros
+    for(int i = 0; i < *v; i++)
+        for(int j = 0; j < *v; j++) // 
+            matriz2[i*(*v)+j] = 0;
     k = matriz;
 
+    // Lê as arestas
     while (fscanf(of, "e %d %d\n", &i, &j) == 2)
     {
         sscanf("1", "%d", k + calcIndice(i - 1, j - 1, *v));
     }
 
     printf("\n");
-    // mostrar matriz
+    // Mostra a matriz
     for (int i = 0; i < (*v); i++)
     {
         for (int j = 0; j < (*v); j++)
@@ -89,7 +91,7 @@ int *preenche_matriz(char *file, int *v, int *numero_iteracoes)
         printf("\n");
     }
 
-    return matriz;
+    return matriz; // Retorna o grafo
 }
 
 void gerar_solinicial(int *sol, int v)
@@ -100,6 +102,8 @@ void gerar_solinicial(int *sol, int v)
     {
         sol[i] = 0;
     }
+
+    // Preenche a solução inicial
     for (int i = 0; i < (v / 2); i++)
     {
         do
@@ -240,7 +244,7 @@ pchrom init_pop(info d)
     indiv = malloc(sizeof(chrom) * d.pop);
     if (!indiv)
     {
-        printf("Erro na alocacao de memoria. \n");
+        printf("[ERRO] Ocorreu um erro ao alocar memória\n");
         exit(1);
     }
     for (i = 0; i < d.pop; i++)
@@ -248,7 +252,7 @@ pchrom init_pop(info d)
         indiv[i].p = malloc(sizeof(int) * d.vertices);
         if (!indiv[i].p)
         {
-            fprintf(stderr, "Erro na alocacao de memoria. \n");
+            printf("[ERRO] Ocorreu um erro ao alocar memória\n");
             exit(2);
         }
         gera_sol_inicial(indiv[i].p, d.vertices);

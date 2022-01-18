@@ -15,7 +15,7 @@ void torneioBinario();
 int main()
 {
     int escolha;
-    srand((unsigned)time(NULL));
+    srand((unsigned)time(NULL)); // Inicializar o gerador de números aleatórios
     mostraASCII();
     printf("\n1 - Trepa Colinas (com vizinhança 1)");
     printf("\n2 - Trepa Colinas (probabilístico)");
@@ -42,6 +42,7 @@ void tColinas()
     float mbf = 0.0;
     int i;
 
+    // Obter o nome do ficheiro
     mostraASCII();
     fflush(stdin);
     printf("Introduza o nome do ficheiro: ");
@@ -49,9 +50,9 @@ void tColinas()
     file[strlen(file) - 1] = '\0';
     printf("\n");
 
-    matriz = preenche_matriz(file, &vert, &iter);
-    solucao = malloc(sizeof(int) * vert);
-    best = malloc(sizeof(int) * vert);
+    matriz = preenche_matriz(file, &vert, &iter); // Obter o grafo
+    solucao = malloc(sizeof(int) * vert); // Alocar memória para a solução a ser calculada
+    best = malloc(sizeof(int) * vert); // Alocar memória para a solução ótima
 
     if (solucao == NULL || best == NULL)
     {
@@ -59,18 +60,19 @@ void tColinas()
         exit(1);
     }
 
+    // Ciclo de execução
     for (i = 0; i < runs; i++)
     {
 
-        gerar_solinicial(solucao, vert);
-        custo = trepaColinas(solucao, matriz, vert, iter);
+        gerar_solinicial(solucao, vert); // Gerar solução inicial
+        custo = trepaColinas(solucao, matriz, vert, iter); // Calcular o custo da solução inicial
 
         // printf("\nRepeticao %d: ", i);
         // escrever_solucao(solucao, vert);
         // printf("Custo final: %2d\n", custo);
 
-        mbf += custo;
-        if (i == 0 || bestCusto < custo)
+        mbf += custo; // Acumular o custo da solução
+        if (i == 0 || bestCusto < custo) // Se for a primeira repetição ou se o custo da solução atual for melhor que o custo da solução ótima
         {
             bestCusto = custo;
             substitui(best, solucao, vert);
@@ -96,6 +98,7 @@ void tColinasProb()
     float mbf = 0.0;
     int i;
 
+    // Obter o nome do ficheiro
     mostraASCII();
     fflush(stdin);
     printf("Introduza o nome do ficheiro: ");
@@ -103,9 +106,9 @@ void tColinasProb()
     file[strlen(file) - 1] = '\0';
     printf("\n");
 
-    matriz = preenche_matriz(file, &vert, &iter);
-    solucao = malloc(sizeof(int) * vert);
-    best = malloc(sizeof(int) * vert);
+    matriz = preenche_matriz(file, &vert, &iter); // Obter o grafo
+    solucao = malloc(sizeof(int) * vert); // Alocar memória para a solução a ser calculada
+    best = malloc(sizeof(int) * vert); // Alocar memória para a solução ótima
 
     if (solucao == NULL || best == NULL)
     {
@@ -113,19 +116,20 @@ void tColinasProb()
         exit(1);
     }
 
+    // Ciclo de execução
     for (i = 0; i < runs; i++)
     {
-        gerar_solinicial(solucao, vert);
+        gerar_solinicial(solucao, vert); // Gerar solução inicial
         //escrever_solucao(solucao, vert);
 
-        custo = trepaColinasProb(solucao, matriz, vert, iter);
+        custo = trepaColinasProb(solucao, matriz, vert, iter); // Calcular o custo da solução inicial
 
         // printf("\nRepeticao %d: ", i);
         // escrever_solucao(solucao, vert);
         // printf("Custo final: %2d\n", custo);
 
-        mbf += custo;
-        if (i == 0 || bestCusto <= custo)
+        mbf += custo; // Acumular o custo da solução
+        if (i == 0 || bestCusto <= custo) // Se for a primeira repetição ou se o custo da solução atual for melhor que o custo da solução ótima
         {
             bestCusto = custo;
             substitui(best, solucao, vert);
@@ -154,6 +158,7 @@ void torneioBinario()
     chrom best_run, best_ever;
     int i;
 
+    // Obter o nome do ficheiro
     mostraASCII();
     fflush(stdin);
     printf("Introduza o nome do ficheiro: ");
@@ -161,9 +166,10 @@ void torneioBinario()
     file[strlen(file) - 1] = '\0';
     printf("\n");
 
-    mat = init_dados(file, &vert, &iter);
-    param = init_data(vert, iter);
+    mat = init_dados(file, &vert, &iter); // Obter o grafo
+    param = init_data(vert, iter); // Inicializar a struct de informação com os dados
 
+    // Ciclo de execução
     for (i = 0; i < runs; i++)
     {
         printf("Repetição %d\n", i);
